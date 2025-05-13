@@ -1,0 +1,48 @@
+#include <WiFi.h>
+#include <HTTPClient.h>
+
+const char* ssid = "اسم_شبكة_WIFI";
+const char* password = "كلمة_المرور";
+
+const char* server = "http://IP_الخادم/insert_ac_status.php"; // استبدل بـ IP المحلي أو الدومين
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("تم الاتصال بالشبكة");
+
+  sendStatus("ON");   // إرسال مثال عند البداية
+  delay(5000);
+  sendStatus("OFF");
+}
+
+void loop() {
+  delay(60000);  // كل دقيقة
+  sendStatus("ON");
+  delay(60000);
+  sendStatus("OFF");
+}
+
+void sendStatus(String status) {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(server);
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    String postData = "device_id=ESP32_001&status=" + status;
+    int response = http.POST(postData);
+
+    if (response > 0) {
+      String res = http.getString();
+      Serial.println(res);
+    } else {
+      Serial.println("خطأ في الإرسال");
+    }
+
+    http.end();
+  }
+}
