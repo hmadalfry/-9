@@ -1,0 +1,27 @@
+<?php
+$host = "localhost";
+$db = "smart_ac";
+$user = "root"; // غيّره إذا لزم
+$pass = "";
+
+$conn = new mysqli($host, $user, $pass, $db);
+if ($conn->connect_error) {
+    die("فشل الاتصال بقاعدة البيانات: " . $conn->connect_error);
+}
+
+$device_id = $_POST['device_id'] ?? '';
+$status = $_POST['status'] ?? '';
+
+if ($device_id && ($status == 'ON' || $status == 'OFF')) {
+    $sql = "INSERT INTO ac_status_log (device_id, status) VALUES ('$device_id', '$status')";
+    if ($conn->query($sql)) {
+        echo "تم التخزين بنجاح";
+    } else {
+        echo "خطأ: " . $conn->error;
+    }
+} else {
+    echo "بيانات غير صحيحة";
+}
+
+$conn->close();
+?>
