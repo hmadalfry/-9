@@ -1,0 +1,10 @@
+CREATE DATABASE smart_ac;
+
+USE smart_ac;
+
+CREATE TABLE ac_status_log (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  device_id VARCHAR(50),
+  status VARCHAR(10), -- 'ON' أو 'OFF'
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
